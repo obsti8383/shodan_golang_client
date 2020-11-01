@@ -36,7 +36,7 @@ func main() {
 	for _, host := range hostSearch.Matches {
 		fmt.Printf("%18s:%d\t%s\t%s\t%s\t%s\t%s\t%s\n", host.IPString, host.Port, host.Hostnames, host.Product, host.Org, host.Location.City, host.OS, host.Timestamp)
 		for key, vuln := range host.Vulns {
-			fmt.Printf("\t\t\tVulns: \t%s\t%s\n", key, vuln.Cvss)
+			fmt.Printf("\t\t\tVulns: \t%s\t%v\n", key, vuln.Cvss)
 		}
 		// hostnames in single lines only:
 		// for _, domains := range host.Domains {

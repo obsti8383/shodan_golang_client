@@ -22,10 +22,10 @@ type HostLocation struct {
 }
 
 type Vulnerability struct {
-	Verified   bool     `json:"verified"`
-	References []string `json:"references"`
-	Cvss       string   `json:"cvss"`
-	Summary    string   `json:"summary"`
+	Verified   bool        `json:"verified"`
+	References []string    `json:"references"`
+	Cvss       interface{} `json:"cvss"` // sometimes float, sometimest string...
+	Summary    string      `json:"summary"`
 }
 
 type Host struct {
