@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
-	//"io/ioutil"
+	"io/ioutil"
 	"net/url"
 )
 
@@ -22,19 +21,28 @@ type HostLocation struct {
 	Latitude     float32 `json:"latitude"`
 }
 
+type Vulnerability struct {
+	Verified   bool     `json:"verified"`
+	References []string `json:"references"`
+	Cvss       string   `json:"cvss"`
+	Summary    string   `json:"summary"`
+}
+
 type Host struct {
-	OS        string       `json:"os"`
-	Timestamp string       `json:"timestamp"`
-	ISP       string       `json:"isp"`
-	ASN       string       `json:"asn"`
-	Hostnames []string     `json:"hostnames"`
-	Location  HostLocation `json:"location"`
-	IP        int64        `json:"ip"`
-	Domains   []string     `json:"domains"`
-	Org       string       `json:"org"`
-	Data      string       `json:"data"`
-	Port      int          `json:"port"`
-	IPString  string       `json:"ip_str"`
+	OS        string                   `json:"os"`
+	Timestamp string                   `json:"timestamp"`
+	ISP       string                   `json:"isp"`
+	ASN       string                   `json:"asn"`
+	Hostnames []string                 `json:"hostnames"`
+	Location  HostLocation             `json:"location"`
+	IP        int64                    `json:"ip"`
+	Domains   []string                 `json:"domains"`
+	Org       string                   `json:"org"`
+	Data      string                   `json:"data"`
+	Port      int                      `json:"port"`
+	IPString  string                   `json:"ip_str"`
+	Product   string                   `json:"product`
+	Vulns     map[string]Vulnerability `json:"vulns"`
 }
 
 type ErrorResponse struct {
@@ -63,7 +71,7 @@ func (s *Client) HostSearch(q string) (searchResult *HostSearch, nextLink string
 		return nil, "", err
 	}
 
-	//_ = ioutil.WriteFile("response.json", jsonByteArray, 0644)
+	_ = ioutil.WriteFile("response.json", jsonByteArray, 0644)
 
 	var ret HostSearch
 	if err := json.Unmarshal(jsonByteArray, &ret); err != nil {

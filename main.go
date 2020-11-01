@@ -34,15 +34,14 @@ func main() {
 	}
 
 	for _, host := range hostSearch.Matches {
-		//fmt.Printf("%18s:%d\t%s\t%s\t%s\t%s\t%s\n", host.IPString, host.Port, host.Hostnames, host.Org, host.Location.City, host.OS, host.Timestamp)
-		// hostnames in single lines only:
-		for _, hostname := range host.Hostnames {
-			fmt.Printf("%s\n", hostname)
+		fmt.Printf("%18s:%d\t%s\t%s\t%s\t%s\t%s\t%s\n", host.IPString, host.Port, host.Hostnames, host.Product, host.Org, host.Location.City, host.OS, host.Timestamp)
+		for key, vuln := range host.Vulns {
+			fmt.Printf("\t\t\tVulns: \t%s\t%s\n", key, vuln.Cvss)
 		}
+		// hostnames in single lines only:
+		// for _, domains := range host.Domains {
+		// 	fmt.Printf("%s\n", domains)
+		// }
 	}
 	fmt.Println("Number of results:", len(hostSearch.Matches))
-
-	//for _, host := range hostSearch.Matches {
-	//		fmt.Println(host.IPString, host.i)
-	//}
 }
