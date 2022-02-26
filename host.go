@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -54,29 +53,54 @@ type HostSearch struct {
 	Matches []Host `json:"matches"`
 }
 
-func (s *Client) HostSearch(q string) (searchResult *HostSearch, nextLink string, err error) {
+func (s *Client) HostSearch(q string, maxPages int) (*HostSearch, error) {
 	uri := fmt.Sprintf("%s/shodan/host/search?key=%s&query=%s", BaseURL, s.apiKey, url.QueryEscape(q))
-	fmt.Println("URI:" + uri)
+	matches := make([]Host, 0, 100)
 
+	fetchNextPage := true
+	for i := 1; fetchNextPage && i <= maxPages; i++ {
+		nextUri := uri
+		if i > 1 {
+			nextUri += fmt.Sprintf("&page=%d", i)
+		}
+
+		ret, err := s.hostSearchIterator(nextUri)
+		if err != nil {
+			return nil, err
+		}
+		matches = append(matches, ret.Matches...)
+
+		if len(ret.Matches) < 100 {
+			fetchNextPage = false
+		}
+	}
+
+	var searchResult HostSearch
+	searchResult.Matches = matches
+	return &searchResult, nil
+}
+
+func (s *Client) hostSearchIterator(uri string) (searchResult *HostSearch, err error) {
 	jsonByteArray, err := getJSONfromWebservice(uri, nil)
 	if err != nil {
 		// error handling
 		// example error body response: {"error": "Please upgrade your API plan to use filters or paging."}
 		var errorResp ErrorResponse
 		if errUnmarshal := json.Unmarshal(jsonByteArray, &errorResp); errUnmarshal != nil {
-			return nil, "", err
+			return nil, err
 		}
 
 		err = errors.New(errorResp.Error)
-		return nil, "", err
+		return nil, err
 	}
 
-	_ = ioutil.WriteFile("response.json", jsonByteArray, 0644)
+	//_ = ioutil.WriteFile("response.json", jsonByteArray, 0644)
 
+	// evaluate JSON response
 	var ret HostSearch
 	if err := json.Unmarshal(jsonByteArray, &ret); err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
-	return &ret, "", nil
+	return &ret, nil
 }

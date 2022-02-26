@@ -9,12 +9,6 @@ import (
 	"time"
 )
 
-//const (
-//	USER_AGENT  = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
-//	ACCEPT      = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
-//	ACCEPT_LANG = "en-US,en;q=0.8"
-//)
-
 func getJSONfromWebservice(url string, hvals map[string]string) ([]byte, error) {
 	d := net.Dialer{}
 	client := &http.Client{
@@ -34,13 +28,11 @@ func getJSONfromWebservice(url string, hvals map[string]string) ([]byte, error) 
 		return nil, err
 	}
 
-	//	req.Header.Add("User-Agent", USER_AGENT)
+	//req.Header.Add("User-Agent", USER_AGENT)
 	//req.Header.Add("Accept", ACCEPT)
 	//req.Header.Add("Accept-Language", ACCEPT_LANG)
-	if hvals != nil {
-		for k, v := range hvals {
-			req.Header.Add(k, v)
-		}
+	for k, v := range hvals {
+		req.Header.Add(k, v)
 	}
 
 	resp, err := client.Do(req)
